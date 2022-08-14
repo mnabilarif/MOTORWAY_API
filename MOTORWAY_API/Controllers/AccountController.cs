@@ -328,7 +328,7 @@ namespace MOTORWAY_API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email , Distance = model.Distance , InterchangeName =model.InterchangeName };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 

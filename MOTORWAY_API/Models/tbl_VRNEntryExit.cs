@@ -22,6 +22,8 @@ namespace MOTORWAY_API.Models
         public string CreatedBy { get; set; }
         public string EntryAt { get; set; }
         public string ExitAt { get; set; }
+        public Nullable<System.DateTime> UpdateOn { get; set; }
+        public string UpdatedBy { get; set; }
     
         public virtual AspNetUser AspNetUser { get; set; }
         public virtual AspNetUser AspNetUser1 { get; set; }

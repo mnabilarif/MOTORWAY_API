@@ -65,7 +65,8 @@
           <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="Distance" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Distance" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="InterchangeName" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="CT_Setting">
           <Key>
@@ -75,6 +76,8 @@
           <Property Name="BaseRate" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="PerKMRate" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="WeekendsPercentage" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="HolidayDiscountPercentage" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="VRNDiscount" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="tbl_VRNEntryExit">
           <Key>
@@ -88,6 +91,8 @@
           <Property Name="ExitAt" Type="nvarchar" MaxLength="128" />
           <Property Name="CreatedOn" Type="datetime" Nullable="false" />
           <Property Name="CreatedBy" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UpdateOn" Type="datetime" />
+          <Property Name="UpdatedBy" Type="nvarchar" MaxLength="128" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
@@ -262,12 +267,13 @@
           <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
           <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
           <Property Name="UserName" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Distance" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Distance" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
           <NavigationProperty Name="tbl_VRNEntryExit" Relationship="MOTORWAY_API_DBModel.FK_tbl_VRNEntryExit_AspNetUsers" FromRole="AspNetUser" ToRole="tbl_VRNEntryExit" />
           <NavigationProperty Name="tbl_VRNEntryExit1" Relationship="MOTORWAY_API_DBModel.FK_tbl_VRNEntryExit_AspNetUsers1" FromRole="AspNetUser" ToRole="tbl_VRNEntryExit" />
+          <Property Name="InterchangeName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="CT_Setting">
           <Key>
@@ -277,6 +283,8 @@
           <Property Name="BaseRate" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="PerKMRate" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="WeekendsPercentage" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="HolidayDiscountPercentage" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="VRNDiscount" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="tbl_VRNEntryExit">
           <Key>
@@ -292,6 +300,8 @@
           <Property Name="ExitAt" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="AspNetUser" Relationship="MOTORWAY_API_DBModel.FK_tbl_VRNEntryExit_AspNetUsers" FromRole="tbl_VRNEntryExit" ToRole="AspNetUser" />
           <NavigationProperty Name="AspNetUser1" Relationship="MOTORWAY_API_DBModel.FK_tbl_VRNEntryExit_AspNetUsers1" FromRole="tbl_VRNEntryExit" ToRole="AspNetUser" />
+          <Property Name="UpdateOn" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedBy" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
@@ -424,6 +434,7 @@
           <EntitySetMapping Name="AspNetUsers">
             <EntityTypeMapping TypeName="MOTORWAY_API_DBModel.AspNetUser">
               <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="InterchangeName" ColumnName="InterchangeName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
@@ -443,6 +454,8 @@
           <EntitySetMapping Name="CT_Setting">
             <EntityTypeMapping TypeName="MOTORWAY_API_DBModel.CT_Setting">
               <MappingFragment StoreEntitySet="CT_Setting">
+                <ScalarProperty Name="VRNDiscount" ColumnName="VRNDiscount" />
+                <ScalarProperty Name="HolidayDiscountPercentage" ColumnName="HolidayDiscountPercentage" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="BaseRate" ColumnName="BaseRate" />
                 <ScalarProperty Name="PerKMRate" ColumnName="PerKMRate" />
@@ -453,6 +466,8 @@
           <EntitySetMapping Name="tbl_VRNEntryExit">
             <EntityTypeMapping TypeName="MOTORWAY_API_DBModel.tbl_VRNEntryExit">
               <MappingFragment StoreEntitySet="tbl_VRNEntryExit">
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdateOn" ColumnName="UpdateOn" />
                 <ScalarProperty Name="ExitAt" ColumnName="ExitAt" />
                 <ScalarProperty Name="EntryAt" ColumnName="EntryAt" />
                 <ScalarProperty Name="Id" ColumnName="Id" />

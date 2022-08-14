@@ -13,9 +13,9 @@ namespace MOTORWAY_API.Controllers
 {
 
     [Authorize]
+    [RoutePrefix("api/Motorway")]
     public class MotorwayController : ApiController
     {
-
 
         public JsonResult<bool> AddEntry(vmEntryExit Data)
         {
@@ -26,7 +26,6 @@ namespace MOTORWAY_API.Controllers
             return Json(M.AddEntry(Data, Id));
         }
 
-
         public JsonResult<vmCalculation> AddExit(vmEntryExit Data)
         {
             var Id = RequestContext.Principal.Identity.GetUserId();
@@ -36,31 +35,38 @@ namespace MOTORWAY_API.Controllers
             return Json(M.AddExit(Data, Id));
         }
 
-        // GET: api/Motorway
-        public IEnumerable<string> Get()
+
+        //Bismillah
+        public JsonResult<bool> Test()
         {
-            return new string[] { "value1", "value2" };
+            return Json(true);
         }
 
-        // GET: api/Motorway/5
-        public string Get(int id)
-        {
-            return "value";
-        }
+        //// GET: api/Motorway
+        //public IEnumerable<string> Get()
+        //{
+        //    return new string[] { "value1", "value2" };
+        //}
 
-        // POST: api/Motorway
-        public void Post([FromBody] string value)
-        {
-        }
+        //// GET: api/Motorway/5
+        //public string Get(int id)
+        //{
+        //    return "value";
+        //}
 
-        // PUT: api/Motorway/5
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        //// POST: api/Motorway
+        //public void Post([FromBody] string value)
+        //{
+        //}
 
-        // DELETE: api/Motorway/5
-        public void Delete(int id)
-        {
-        }
+        //// PUT: api/Motorway/5
+        //public void Put(int id, [FromBody] string value)
+        //{
+        //}
+
+        //// DELETE: api/Motorway/5
+        //public void Delete(int id)
+        //{
+        //}
     }
 }

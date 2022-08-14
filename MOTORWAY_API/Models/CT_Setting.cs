@@ -18,5 +18,7 @@ namespace MOTORWAY_API.Models
         public decimal BaseRate { get; set; }
         public decimal PerKMRate { get; set; }
         public decimal WeekendsPercentage { get; set; }
+        public Nullable<decimal> HolidayDiscountPercentage { get; set; }
+        public Nullable<decimal> VRNDiscount { get; set; }
     }
 }

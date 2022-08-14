@@ -48,6 +48,17 @@ namespace MOTORWAY_API.Models
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+
+        //added ew field for distance integration with user
+        [Required]
+        [Display(Name = "Distance in km")]
+        [Compare("Distance", ErrorMessage = "Distacne must be numeric")]
+        public decimal Distance { get; set; }
+
+        public string InterchangeName { get; set; }
+
+
     }
 
     public class RegisterExternalBindingModel

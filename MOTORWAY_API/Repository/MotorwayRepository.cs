@@ -20,7 +20,9 @@ namespace MOTORWAY_API.Repository
                     CreatedBy = UserId,
                     VRN = Data.VRN,
                     EntryTime = Data.Time,
-                    EntryAt = Data.StationId
+                    EntryAt = UserId
+
+                    //EntryAt = Data.StationId
                 };
 
                 db.tbl_VRNEntryExit.Add(NewEntry);
@@ -48,10 +50,16 @@ namespace MOTORWAY_API.Repository
             {
                 var BaseRate = Settings.BaseRate;
                 var PerKMRate = Settings.PerKMRate;
-                var WeekendPercentage = Settings.WeekendsPercentage;
+                var WeekendRate = Settings.WeekendsPercentage;
+                var HolidayDiscount = Settings.HolidayDiscountPercentage;
+                var VrnDiscount = Settings.VRNDiscount;
 
                 decimal SubTotal = 0;
+
                 decimal TotalDiscount = 0;
+                decimal Total = 0;
+                decimal DiscountPercent = 0;
+                string CostBreakDown = "Base: 20Rs , ";
 
 
                 var Entry = db.tbl_VRNEntryExit.Where(x => x.VRN == Data.VRN && x.ExitAt == null).OrderByDescending(x => x.CreatedOn).FirstOrDefault();
@@ -60,15 +68,17 @@ namespace MOTORWAY_API.Repository
                 {
                     var EntryPoint = Entry.EntryAt;
                     var EntryDistance = Entry.AspNetUser.Distance;
-                    Entry.ExitTime = Data.Time;
-                    Entry.ExitAt = Data.StationId;
+                    Entry.ExitTime = Data.Time;  // frocalculation at entry point requirement
+                    //Entry.ExitAt = Data.StationId;
+                    Entry.ExitAt = UserId;
 
-                    db.SaveChanges();
+                    db.SaveChanges(); //
 
                     var EntryTime = (DateTime)Entry.EntryTime;
-                    var ExitDistance = db.AspNetUsers.Where(x => x.Id == Data.StationId).FirstOrDefault().Distance;
+                    var ExitDistance = db.AspNetUsers.Where(x => x.Id == UserId).FirstOrDefault().Distance;
 
                     var TotalDistance = ExitDistance - EntryDistance;
+                    var VRNNumber = Convert.ToInt32(Data.VRN.Split('-')[1]);  //get last three digits
 
                     if ((EntryTime.Day == 23 && Data.Time.Month == 3) || (EntryTime.Day == 25 && EntryTime.Month == 12) || (Data.Time.Day == 14 && Data.Time.Month == 8))
                     {
@@ -76,58 +86,102 @@ namespace MOTORWAY_API.Repository
                         //weekend also
                         if (EntryTime.DayOfWeek == DayOfWeek.Saturday || EntryTime.DayOfWeek == DayOfWeek.Sunday)
                         {
-                            PerKMRate = PerKMRate * (decimal)1.5;
-                            TotalDiscount = 50;
-                            SubTotal = PerKMRate * BaseRate * 50 / 100;
+                            //weekend peak
+                            SubTotal = BaseRate + ((PerKMRate * (decimal)WeekendRate) * GetPositiveDistance((decimal)TotalDistance));
+                            Total = SubTotal * (decimal)HolidayDiscount;
+                            TotalDiscount = SubTotal - Total;
+                            DiscountPercent = (decimal)HolidayDiscount;
+                            CostBreakDown += "Distance: "+GetPositiveDistance((decimal)TotalDistance).ToString() + "  Km , Weekend Peak Rate : "+ (WeekendRate).ToString()
+                                +" Holiday Discount:" +HolidayDiscount.ToString()
+                                ;
                         }
-                        else
+                        else  //no peak / no discount
                         {
-                            TotalDiscount = 50;
-                            SubTotal = PerKMRate * BaseRate * 50 / 100;
+                            SubTotal = BaseRate + (PerKMRate * GetPositiveDistance((decimal)TotalDistance));
+                            Total = SubTotal * (decimal)HolidayDiscount;
+
+                            CostBreakDown += "Distance: " + GetPositiveDistance((decimal)TotalDistance).ToString() + " Km ,  Normal Day Rate : " + PerKMRate.ToString()
+                                + " Holiday Discount:" + HolidayDiscount.ToString()
+                                ;
                         }
 
                     }
                     else if (EntryTime.DayOfWeek == DayOfWeek.Saturday || EntryTime.DayOfWeek == DayOfWeek.Sunday)
                     {
-                        PerKMRate = PerKMRate * (decimal)1.5;
-                        TotalDiscount = 50;
-                        SubTotal = PerKMRate * BaseRate * 50 / 100;
+                        //fare 1.5 peak /km
 
+                        SubTotal = BaseRate + ((PerKMRate * (decimal)WeekendRate) * GetPositiveDistance((decimal)TotalDistance));
+                        Total = SubTotal ;
+
+                        CostBreakDown += "Distance: " + GetPositiveDistance((decimal)TotalDistance).ToString() + " Km , Weekend Peak Rate : " + (WeekendRate).ToString()
+                            + " Holiday Discount:" + HolidayDiscount.ToString()
+                            ;
                     }
                     else if (EntryTime.DayOfWeek == DayOfWeek.Monday || EntryTime.DayOfWeek == DayOfWeek.Wednesday)
                     {
-                        SubTotal = BaseRate + (PerKMRate * GetPositiveDistance((decimal)TotalDistance));
-
-                    }
-                    else if (EntryTime.DayOfWeek == DayOfWeek.Tuesday || EntryTime.DayOfWeek == DayOfWeek.Thursday)
-                    {
-                        var VRNNumber = Convert.ToInt32(Data.VRN.Split('-')[1]);
-
                         if (VRNNumber % 2 == 0)
                         {
-                            //Even
-                            SubTotal = BaseRate + (PerKMRate * GetPositiveDistance((decimal)TotalDistance) );
+                            //Even discount
+                            SubTotal = BaseRate + (PerKMRate * GetPositiveDistance((decimal)TotalDistance));
+                            Total = SubTotal * (decimal)VrnDiscount;
+
+                            TotalDiscount = SubTotal - Total;
+                            DiscountPercent = (decimal)VrnDiscount;
+
+                            CostBreakDown += "Distance: " + GetPositiveDistance((decimal)TotalDistance).ToString() + "Km ,"
+                                + " VRN EVEN Discount:" + VrnDiscount.ToString()
+                                ;
                         }
                         else
                         {
-                            //Odd
-                            SubTotal = BaseRate + (PerKMRate * GetPositiveDistance((decimal)TotalDistance) * 10 / 100);
+                            //Odd  no discoutn
+                            SubTotal = BaseRate + (PerKMRate * GetPositiveDistance((decimal)TotalDistance));
+                            Total = SubTotal;
+                            CostBreakDown += " Distance: " + GetPositiveDistance((decimal)TotalDistance).ToString() + "Km ,"
+                               ;
                         }
-
-                        var Calculation = new vmCalculation()
+                    }
+                    else if (EntryTime.DayOfWeek == DayOfWeek.Tuesday || EntryTime.DayOfWeek == DayOfWeek.Thursday)
+                    {
+                        if (VRNNumber % 2 == 0)
                         {
-                            BaseRate = BaseRate,
-                            OtherDiscout = TotalDiscount,
-                            SubTotal = TotalDiscount,
-                        };
+                            //Even
+                            //Odd  no discoutn
+                            SubTotal = BaseRate + (PerKMRate * GetPositiveDistance((decimal)TotalDistance));
+                            Total = SubTotal;
+                            CostBreakDown += " Distance: " + GetPositiveDistance((decimal)TotalDistance).ToString() + "Km ,"
+                               ;
+                        }
+                        else
+                        {
+                            //Odd discount
 
-                        return Calculation;
+                            SubTotal = BaseRate + (PerKMRate * GetPositiveDistance((decimal)TotalDistance));
+                            Total = SubTotal * (decimal)VrnDiscount;
 
+                            TotalDiscount = SubTotal - Total;
+                            DiscountPercent = (decimal)VrnDiscount;
 
+                            CostBreakDown += "Distance: " + GetPositiveDistance((decimal)TotalDistance).ToString() + "Km ,"
+                                + " VRN ODD Discount:" + VrnDiscount.ToString()
+                                ;
+                        }
                     }
 
+                    string From = db.AspNetUsers.Where(x => x.Id == Entry.EntryAt).FirstOrDefault().InterchangeName;
+                    string To = db.AspNetUsers.Where(x => x.Id == Entry.ExitAt).FirstOrDefault().InterchangeName;
 
+                    //response back to UI
+                    var Calculation = new vmCalculation()
+                    {
+                        BaseRate = BaseRate,
+                        DistanceCostBreakdown = CostBreakDown +" ... From:"+From+" > TO> "+To,
+                        SubTotal = SubTotal,
+                        OtherDiscout = TotalDiscount,
+                        Total = Total
+                    };
 
+                    return Calculation;
                 }
                 else
                 {
@@ -139,8 +193,6 @@ namespace MOTORWAY_API.Repository
             {
                 return null;
             }
-
-            return null;
         }
     }
 }

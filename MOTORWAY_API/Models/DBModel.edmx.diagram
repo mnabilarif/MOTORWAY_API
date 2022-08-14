@@ -4,14 +4,14 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="2a846a8fd6b1477e987faa098d49f010" Name="Diagram1">
-        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.C__MigrationHistory" Width="1.5" PointX="0.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.AspNetRole" Width="1.5" PointX="0.75" PointY="2.5" IsExpanded="true" />
-        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
-        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.AspNetUser" Width="1.5" PointX="3" PointY="1.25" IsExpanded="true" />
-        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.CT_Setting" Width="1.5" PointX="2.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.tbl_VRNEntryExit" Width="1.5" PointX="4.75" PointY="6.75" IsExpanded="true" />
+      <Diagram DiagramId="2a846a8fd6b1477e987faa098d49f010" Name="Diagram1" ZoomLevel="86">
+        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.C__MigrationHistory" Width="1.5" PointX="10.625" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.AspNetRole" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.AspNetUserClaim" Width="1.5" PointX="10.625" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.AspNetUserLogin" Width="1.5" PointX="8.125" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.AspNetUser" Width="1.5" PointX="5.375" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.CT_Setting" Width="1.5" PointX="1.125" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MOTORWAY_API_DBModel.tbl_VRNEntryExit" Width="1.5" PointX="3.25" PointY="2.125" IsExpanded="true" />
         <AssociationConnector Association="MOTORWAY_API_DBModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="MOTORWAY_API_DBModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="MOTORWAY_API_DBModel.AspNetUserRoles" ManuallyRouted="false" />

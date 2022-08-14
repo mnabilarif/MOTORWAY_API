@@ -15,9 +15,31 @@ namespace MOTORWAY_API
 
             routes.MapRoute(
                 name: "Default",
-                url: "{controller}/{action}/{id}",
+                url: "{controller}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+
+
             );
+
+            routes.MapRoute(
+               name: "AddEntry",
+               url: "{controller}/action/{id}",
+               defaults: new { controller = "Motorway", action = "AddEntry", id = UrlParameter.Optional }
+
+           );
+
+            routes.MapRoute(
+               name: "AddExit",
+               url: "{controller}/action/{id}",
+               defaults: new { controller = "Motorway", action = "AddExit", id = UrlParameter.Optional }
+
+           );
+            routes.MapRoute(
+               name: "Test",
+               url: "{controller}/action/{id}",
+               defaults: new { controller = "Motorway", action = "Test", id = UrlParameter.Optional }
+
+           );
         }
     }
 }
